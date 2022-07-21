@@ -1,0 +1,87 @@
+#include <stdio.h>    //贪吃蛇 
+#include <windows.h>  //windows系统头文件
+#include <commctrl.h>
+#include <easyx.h>//图形界面库 
+
+#define WIDTH  640
+#define HEIGHT 480
+#define USIZE  10
+
+//1.游戏里面有啥 蛇 食物 时间 分数 
+//
+int main()
+{
+	//创建一个窗口
+	initgraph(WIDTH,HEIGHT);
+	int i,j;
+
+	//定义蛇 
+	int len;     //蛇的长度
+	int dir;     //蛇的方向  0上   1下   2左   3右
+	int x[200];  //蛇的x坐标  //200个
+	int y[200];  //蛇的y坐标
+
+	//定义食物
+	int fx, fy;
+
+	//初始化 (最开始的时候)
+	len = 1;
+	dir = 3;
+	x[0] = 0;
+	y[0] = 0;
+
+	//初始化食物 （注意）食物坐标随机出现 但是蛇头的移动是以USIZE为单位
+	//让食物和蛇在一条直线上 
+	fx = rand() % (WIDTH / USIZE) * USIZE;//0 10 20 30 ...  (0-191)*10 
+	fy = rand() % (HEIGHT / USIZE) * USIZE;
+
+	while (1)
+	{
+		//改变方向 按键
+		if (GetAsyncKeyState(VK_UP)) dir = 0; //上键 
+		if (GetAsyncKeyState(VK_DOWN)) dir = 1;//下 
+		if (GetAsyncKeyState(VK_LEFT)) dir = 2;//左 
+		if (GetAsyncKeyState(VK_RIGHT)) dir = 3;//右 
+		
+		//绘制蛇 绘制几节？len节 
+		cleardevice();  //刷新  3
+		for ( i = 0; i < len; i++)
+			//SendMessage(tb, LVM_SETITEMPOSITION, i, (y[i] << 16) + x[i]);
+			fillrectangle(x[i], y[i], x[i] + USIZE, y[i] + USIZE);   /*4*/
+
+		//绘制食物
+		fillrectangle(fx, fy, fx + USIZE, fy + USIZE);  /* 5*/
+
+		//蛇的移动
+		for (j = len - 1; j>0; j--)
+		{
+		//把蛇的前一节坐标赋值给后面一节（第一节除外，前面没有，只能根据dir移动） 
+			x[j] = x[j - 1];
+			y[j] = y[j - 1];
+		}
+	//蛇头的移动 
+		switch (dir)
+		{
+		case 0: y[0] -= USIZE; break;//向上移动 x不变  y减小 
+		case 1: y[0] += USIZE; break;//向下移动 
+		case 2: x[0] -= USIZE; break;
+		case 3: x[0] += USIZE; break;
+		}
+
+//撞“墙”
+		if (x[0]>=640 ||x[0]<0||y[0]<0||y[0]>=480)
+		{MessageBox(NULL,"GameOver!","提示",MB_OK);
+		exit(0);
+		}
+		//吃到食物
+		if (x[0] == fx&&y[0] == fy)
+		{
+			len++;  //蛇的节数增加1
+			fx = rand() % (WIDTH / USIZE) * USIZE;
+			fy = rand() % (HEIGHT / USIZE) * USIZE;
+		}
+		Sleep(200);//控制速度 
+	}
+	system("pause");
+	return 0;
+}
